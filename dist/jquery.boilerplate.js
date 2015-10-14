@@ -1,3 +1,11 @@
+/*
+ *  jquery-boilerplate - v3.5.0
+ *  A jump-start for jQuery plugins development.
+ *  http://jqueryboilerplate.com
+ *
+ *  Made by Zeno Rocha
+ *  Under MIT License
+ */
 // Module/Plugin core
 // Note: the wrapper code you see around the module is what enables
 // us to support multiple module formats and specifications by
@@ -23,11 +31,11 @@
     (this.jQuery || this.ender || this.$ || this)[name] = theModule;
   }
 })( "core", function () {
-    var module = this;
-    module.plugins = [];
-    module.highlightColor = "yellow";
-    module.errorColor = "red";
-
+  var module = this;
+  module.plugins = [];
+  module.highlightColor = "yellow";
+  module.errorColor = "red";
+	console.log("OYOYOY");
   // define the core module here and return the public API
 
   // This is the highlight method used by the core highlightAll()

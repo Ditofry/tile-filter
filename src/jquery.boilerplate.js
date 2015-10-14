@@ -1,61 +1,47 @@
-// the semi-colon before function invocation is a safety net against concatenated
-// scripts and/or other plugins which may not be closed properly.
-;(function ( $, window, document, undefined ) {
+// Module/Plugin core
+// Note: the wrapper code you see around the module is what enables
+// us to support multiple module formats and specifications by
+// mapping the arguments defined to what a specific format expects
+// to be present. Our actual module functionality is defined lower
+// down, where a named module and exports are demonstrated.
+//
+// Note that dependencies can just as easily be declared if required
+// and should work as demonstrated earlier with the AMD module examples.
 
-	"use strict";
+(function ( name, definition ){
+  var theModule = definition(),
+      // this is considered "safe":
+      hasDefine = typeof define === "function" && define.amd,
+      // hasDefine = typeof define === "function",
+      hasExports = typeof module !== "undefined" && module.exports;
 
-		// undefined is used here as the undefined global variable in ECMAScript 3 is
-		// mutable (ie. it can be changed by someone else). undefined isn't really being
-		// passed in so we can ensure the value of it is truly undefined. In ES5, undefined
-		// can no longer be modified.
+  if ( hasDefine ){ // AMD Module
+    define(theModule);
+  } else if ( hasExports ) { // Node.js Module
+    module.exports = theModule;
+  } else { // Assign to common namespaces or simply the global object (window)
+    (this.jQuery || this.ender || this.$ || this)[name] = theModule;
+  }
+})( "tileFilter", function () {
+  var module = this;
+  module.plugins = [];
+  module.highlightColor = "yellow";
+  module.errorColor = "red";
+	console.log("OYOYOY");
+  // define the core module here and return the public API
 
-		// window and document are passed through as local variable rather than global
-		// as this (slightly) quickens the resolution process and can be more efficiently
-		// minified (especially when both are regularly referenced in your plugin).
+  // This is the highlight method used by the core highlightAll()
+  // method and all of the plugins highlighting elements different
+  // colors
+  module.highlight = function(el,strColor){
+    if(this.jQuery){
+      jQuery(el).css("background", strColor);
+    }
+  };
+  return {
+      highlightAll: function(){
+        module.highlight("div", module.highlightColor);
+      }
+  };
 
-		// Create the defaults once
-		var pluginName = "defaultPluginName",
-				defaults = {
-				propertyName: "value"
-		};
-
-		// The actual plugin constructor
-		function Plugin ( element, options ) {
-				this.element = element;
-				// jQuery has an extend method which merges the contents of two or
-				// more objects, storing the result in the first object. The first object
-				// is generally empty as we don't want to alter the default options for
-				// future instances of the plugin
-				this.settings = $.extend( {}, defaults, options );
-				this._defaults = defaults;
-				this._name = pluginName;
-				this.init();
-		}
-
-		// Avoid Plugin.prototype conflicts
-		$.extend(Plugin.prototype, {
-				init: function () {
-						// Place initialization logic here
-						// You already have access to the DOM element and
-						// the options via the instance, e.g. this.element
-						// and this.settings
-						// you can add more functions like the one below and
-						// call them like so: this.yourOtherFunction(this.element, this.settings).
-						console.log("xD");
-				},
-				yourOtherFunction: function () {
-						// some logic
-				}
-		});
-
-		// A really lightweight plugin wrapper around the constructor,
-		// preventing against multiple instantiations
-		$.fn[ pluginName ] = function ( options ) {
-				return this.each(function() {
-						if ( !$.data( this, "plugin_" + pluginName ) ) {
-								$.data( this, "plugin_" + pluginName, new Plugin( this, options ) );
-						}
-				});
-		};
-
-})( jQuery, window, document );
+});
